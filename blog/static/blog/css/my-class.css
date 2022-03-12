@@ -1,0 +1,26 @@
+.my-font-h1{
+    /*font-family: ;*/
+    font-weight: bold;
+    color: white;
+    font-size: larger;
+}
+
+.my-font-h2{
+    /*font-family: "Fira Code Retina";*/
+    font-weight:normal;
+    color: white;
+    font-size: large;
+}
+
+.my-absolute-center{
+    /*width: 200px; height: 100px;*/
+
+    position: absolute; left: 50%; top: 50%;
+
+    transform: translate(-50%, -50%);    /* 50%为自身尺寸的一半 */
+}
+
+.my-welcome-icon{
+    color:white;!important;
+    font-size: 40px;!important;
+}
