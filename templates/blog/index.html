@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block main %}
 <!-- main -->
 <div class="container">
     <div class="row mx-auto">
 <!--        left-->
-        <div class="col-2 mx-auto" style="margin-top: 80px;margin-bottom: 80px;padding-left: 100px">
+        <div class="col-2 mx-auto" style="margin-top: 80px;margin-bottom: 80px;padding-left: 70px">
             <div class="card" style="width: 18rem;">
-                <img class="card-img-top" src="static/img/headimg.jpeg" alt="Card image cap" >
+                <img class="card-img-top" src="{% static "/img/headimg.jpeg" %}" alt="Card image cap" >
                 <div class="card-body">
                     <h4 class="card-title" style="text-align: center">AngYi</h4>
                     <p class="card-text" style="text-align: center" ><span><i class="fa fa-map-marker"></i></span> Qing Dao</p>
@@ -22,21 +22,25 @@
                         <h5 class="card-title">分类</h5>
                     </div>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Cras justo odio</li>
-                        <li class="list-group-item">Dapibus ac facilisis in</li>
-                        <li class="list-group-item">Vestibulum at eros</li>
+                        {% for cate in cates %}
+                            <li  class="list-group-item">
+                                <a href="{% url 'blog:category' cate.pk %}">{{ cate.name }} <span class="post-count">(13)</span></a>
+                            </li>
+                        {% endfor %}
                     </ul>
                 </div>
             </div>
 
             <div class="card" style="width: 18rem;">
                 <div class="card-body">
-                    <h5 class="card-title">分类</h5>
+                    <h5 class="card-title">标签</h5>
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Cras justo odio</li>
-                    <li class="list-group-item">Dapibus ac facilisis in</li>
-                    <li class="list-group-item">Vestibulum at eros</li>
+                    {% for tag in tags %}
+                            <li  class="list-group-item">
+                                <a href="{% url 'blog:tag' tag.id %}">{{ tag.name }} <span class="post-count">(13)</span></a>
+                            </li>
+                    {% endfor %}
                 </ul>
             </div>
 
@@ -48,7 +52,7 @@
                 <div class="row no-gutters" style="padding-top: 20px">
                     <div class="col-md-8">
                         <div class="card-body" style="vertical-align: middle;">
-                            <h5 class="card-title">{{ post.title }}</h5>
+                            <h5 class="card-title"><a href="{% url "blog:detail" post.id %}">{{ post.title }}</a></h5>
                             <p class="card-text">{{ post.abstract }}</p>
                             <p class="card-text"><small class="text-muted">{{ post.created_time }}</small></p>
                         </div>
