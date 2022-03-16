@@ -2,14 +2,15 @@ import json
 import re
 
 from django.db.models import Count
-from django.db.models.functions import TruncMonth, TruncWeek, TruncYear, TruncDay
+from django.db.models.functions import TruncMonth
 from django.core.paginator import Paginator, PageNotAnInteger, InvalidPage, EmptyPage
 from django.http import HttpResponse, request
 from django.shortcuts import render, get_object_or_404
 from django.views import View
+from rest_framework import serializers
 import markdown
 # Create your views here.
-from django.core import serializers
+# from django.core import serializers
 from markdown.extensions.toc import slugify, TocExtension
 
 from .models import Post, Tag, Category
@@ -61,7 +62,7 @@ def index(request):
                                                'dis_range': dis_range,
                                                "tags": tags,
                                                "cates": cates,
-                                               'count':paginator.count})
+                                               'count': paginator.count})
 
 
 def detail(request, id):
@@ -86,22 +87,35 @@ def archive(request):
         c=Count('id'))
     # print(list(month_count)[0]['month'])
     year_list = list(month_count)
-    year_list.sort(key=lambda x:x['month'],reverse=True)
+    year_list.sort(key=lambda x: x['month'], reverse=True)
     # print(year_list[1]['month'].month)
-    year_month = [(item['month'].year,item['month'].month,item['c']) for item in year_list]
-    return render(request, 'blog/archive.html', context={'year_month':year_month})
+    year_month = [(item['month'].year, item['month'].month, item['c']) for item in year_list]
+    return render(request, 'blog/archive.html', context={'year_month': year_month})
 
 
 # 测试ajax
 # 根据年月获取文章
+
+class PostSerializer(serializers.ModelSerializer):
+    tag_name = serializers.CharField(source='tags.name')
+    cate_name = serializers.CharField(source='category.name')
+
+    class Meta:
+        model = Post
+        fields = '__all__'
+
+
 def getpost_yearmonth(request):
     month = int(request.GET.get('month'))
     year = int(request.GET.get('year'))
 
-    post = Post.objects.get_queryset().filter(created_time__year=year,
-                                         created_time__month=month)
-    print(year,month)
-    return response_success(message='后台响应成功', data_list=json.loads(serializers.serialize("json", post)))
+    post = Post.objects.get_queryset().filter(
+        created_time__year=year,
+        created_time__month=month)
+    posts = PostSerializer(instance=post,many=True)
+    # print(posts.data)
+    return response_success(message='后台响应成功', data_list=posts.data)
+
 
 
 def response_success(message, data=None, data_list=[]):
@@ -111,6 +125,7 @@ def response_success(message, data=None, data_list=[]):
         'data': data,  # 返回单个对象
         'dataList': data_list  # 返回对象数组
     }), 'application/json')
+
 
 def category(request, id):
     # 记得在开始部分导入 Category 类

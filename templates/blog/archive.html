@@ -32,10 +32,10 @@
         $(document).ready(function () {
 
             {#console.log($("h2.timeline-title")[0])#}
-            $("h2.timeline-title").each(function (index){
+            $("h2.timeline-title").each(function (index) {
                 {#console.log($("h2.timeline-title")[index])#}
                 sthis = $("h2.timeline-title")[index]
-                $(this).appear(function (){
+                $(this).appear(function () {
                     // 不应该是点谁获取谁的 innerText
                     text = $("h2.timeline-title")[index].innerText
                     {#console.log($("h2.timeline-title")[index].innerText)#}
@@ -60,26 +60,29 @@
                             console.log(data.length)
                             for (var i = 0; i < data.length; i++) {
                                 // 创建元素
+                                {#console.log(data[i])#}
                                 timeline_item = $(`
                                      <li class="timeline-item" id="month_post_item">
                                         <div class="timeline-info">
-                                            <span>${data[i].fields['created_time']}</span>
+                                            <span>${data[i]['created_time']}</span>
                                         </div>
                                         <div class="timeline-marker"></div>
                                         <div class="timeline-content">
-                                            <h3 class="timeline-title">${data[i].fields['title']}</h3>
-                                            <p>${data[i].fields['abstract']}</p>
+                                            <a href="/post/${data[i]['id']}">
+                                                <h3 class="timeline-title">${data[i]['title']}</h3>
+                                            </a>
+
+                                            <p>${data[i]['abstract']}</p>
                                         </div>
                                     </li>
                                 `)
-                                {#console.log($($("h2.timeline-title")[index]).parent())#}
+                                {#console.log(data[i])#}
                                 $($("h2.timeline-title")[index]).parent().parent().after(timeline_item)
                             }
                         }
                     });
                 })
             })
-
 
 
         });
