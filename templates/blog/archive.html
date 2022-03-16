@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main %}
+    <link rel="stylesheet" href="{% static "blog/css/timeline.css" %}">
+    <div class="container-fluid">
+        <div class="row example-basic">
+            <div class="col-md-12 example-title" style="padding-top: 100px">
+                <h2>时间线归档</h2>
+                <p>Blog Time Line</p>
+            </div>
+            <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2">
+                <ul class="timeline" style="padding-left: 300px">
+                    {% for year,month,count in year_month %}
+                        <li class="timeline-item period">
+                            <div class="timeline-info"></div>
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <h2 id="timeline-title" class="timeline-title">{{ year }}-{{ month }} </h2>
+                                <span>{{ count }} posts</span>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        $(document).ready(function () {
+
+            {#console.log($("h2.timeline-title")[0])#}
+            $("h2.timeline-title").each(function (index){
+                {#console.log($("h2.timeline-title")[index])#}
+                sthis = $("h2.timeline-title")[index]
+                $(this).appear(function (){
+                    // 不应该是点谁获取谁的 innerText
+                    text = $("h2.timeline-title")[index].innerText
+                    {#console.log($("h2.timeline-title")[index].innerText)#}
+                    let year = text.slice(0, 4)
+                    let month = text.slice(5, text.length)
+                    $.ajax({
+                        type: "GET",
+                        url: "/api/MonthPosts",
+                        dataType: "json",
+                        data: {
+                            "year": year,
+                            "month": month
+                        },
+                        success: function (response) { //返回的结果自动放在resut里面了
+                            //在回调函数种执行交互流程
+                            // 给下面的子item赋值
+                            if (response['code'] == 200) {
+                                var data = response['dataList'];
+                            }
+
+
+                            console.log(data.length)
+                            for (var i = 0; i < data.length; i++) {
+                                // 创建元素
+                                timeline_item = $(`
+                                     <li class="timeline-item" id="month_post_item">
+                                        <div class="timeline-info">
+                                            <span>${data[i].fields['created_time']}</span>
+                                        </div>
+                                        <div class="timeline-marker"></div>
+                                        <div class="timeline-content">
+                                            <h3 class="timeline-title">${data[i].fields['title']}</h3>
+                                            <p>${data[i].fields['abstract']}</p>
+                                        </div>
+                                    </li>
+                                `)
+                                {#console.log($($("h2.timeline-title")[index]).parent())#}
+                                $($("h2.timeline-title")[index]).parent().parent().after(timeline_item)
+                            }
+                        }
+                    });
+                })
+            })
+
+
+
+        });
+    </script>
+{% endblock %}

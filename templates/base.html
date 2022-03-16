@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
 
     <!-- Bootstrap 的 CSS 文件 -->
-    <link rel="stylesheet" href="{% static "blog/css/bootstrap.min.css" %}">
+    <link rel="stylesheet" href="{% static "blog/css/bootstrap.css" %}">
     <link rel="stylesheet" href="{% static "blog/css/my-class.css" %}">
     <link rel="stylesheet" href="{% static "blog/css/custom.css" %}">
     <link rel="stylesheet" href="{% static "blog/css/pace.css" %}">
@@ -15,43 +15,44 @@
     <link href="https://cdn.bootcss.com/highlight.js/9.15.8/styles/github.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/fontawesome-iconpicker/3.2.0/css/fontawesome-iconpicker.css" rel="stylesheet">
     <!-- 选项 1：jQuery 和 Bootstrap 集成包（集成了 Popper） -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" ></script>
+    <script src="{% static "blog/js/jquery.js" %}"></script>
+    <script src="{% static "blog/js/appear.js" %}"></script>
     <script src="{% static "blog/js/bootstrap.bundle.min.js" %}" ></script>
-    <script src="{% static "blog/js/myjs.js"></script>
+{#    <script src="{% static "blog/js/myjs.js"%}></script>#}
 
 
 
       <style>
-        .codehilite {
-          padding: 0;
-        }
+            .codehilite {
+              padding: 0;
+            }
 
-        /* for block of numbers */
-        .hljs-ln-numbers {
-          -webkit-touch-callout: none;
-          -webkit-user-select: none;
-          -khtml-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
+            /* for block of numbers */
+            .hljs-ln-numbers {
+              -webkit-touch-callout: none;
+              -webkit-user-select: none;
+              -khtml-user-select: none;
+              -moz-user-select: none;
+              -ms-user-select: none;
+              user-select: none;
 
-          text-align: center;
-          color: #ccc;
-          border-right: 1px solid #CCC;
-          vertical-align: top;
-          padding-right: 5px;
-        }
+              text-align: center;
+              color: #ccc;
+              border-right: 1px solid #CCC;
+              vertical-align: top;
+              padding-right: 5px;
+            }
 
-        .hljs-ln-n {
-          width: 30px;
-        }
+            .hljs-ln-n {
+              width: 30px;
+            }
 
-        /* for block of code */
-        .hljs-ln .hljs-ln-code {
-          padding-left: 10px;
-          white-space: pre;
-        }
-        a {text-decoration:none}
+            /* for block of code */
+            .hljs-ln .hljs-ln-code {
+              padding-left: 10px;
+              white-space: pre;
+            }
+            a {text-decoration:none}
       </style>
     <title>index</title>
 </head>
@@ -69,7 +70,7 @@
                     <a class="nav-link my-font-h2" aria-current="page" href="{% url "blog:index" %}">首页</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link my-font-h2" aria-current="page" href="#">分类</a>
+                    <a class="nav-link my-font-h2" aria-current="page" href="{% url "blog:archive" %}">归档</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link my-font-h2" href="#" aria-current="page" >关于我</a>
@@ -86,8 +87,6 @@
 
 {% block main %}
 {% endblock main %}
-
-
 
 {% block toc %}
 {% endblock toc %}
@@ -144,4 +143,7 @@
     hljs.initHighlightingOnLoad();
     hljs.initLineNumbersOnLoad();
     </script>
+
+    {% block script %}
+    {% endblock script %}
 </html>
