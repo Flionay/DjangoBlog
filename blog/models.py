@@ -103,3 +103,14 @@ class Post(models.Model):
         self.abstract = strip_tags(md.convert(self.body))[:50]
 
         super().save(*args, **kwargs)
+
+
+class PostSummary(Post):
+    '''
+    代理类，为了作出统计表
+
+    '''
+    class Meta:
+        proxy=True
+        verbose_name = "Post Summary"
+        verbose_name_plural = "Posts Summary"
