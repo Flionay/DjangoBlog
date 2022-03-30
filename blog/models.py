@@ -1,11 +1,10 @@
 import markdown
-from django.db import models
 
 # Create your models here.
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.html import strip_tags
-
+from mdeditor.fields import MDTextField
 
 class Category(models.Model):
     """
@@ -52,7 +51,7 @@ class Post(models.Model):
 
     # 文章正文，我们使用了 TextField。
     # 存储比较短的字符串可以使用 CharField，但对于文章的正文来说可能会是一大段文本，因此使用 TextField 来存储大段文本。
-    body = models.TextField('文章内容')
+    body = MDTextField('文章内容')
 
     # 这两个列分别表示文章的创建时间和最后一次修改时间，存储时间的字段用 DateTimeField 类型。
     created_time = models.DateTimeField('创建时间')
