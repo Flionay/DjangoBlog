@@ -8,5 +8,6 @@ urlpatterns = [
     path('categories/<int:id>/', views.category, name='category'),
     path('tag/<int:id>/', views.tag, name='tag'),
     path('archive/', views.archive, name='archive'),
-    path('api/MonthPosts',views.getpost_yearmonth)
+    path('api/MonthPosts',views.getpost_yearmonth),
+    path('api/PostsOfDay',views.posts_of_days),
 ]

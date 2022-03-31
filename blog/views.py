@@ -92,6 +92,18 @@ def archive(request):
     year_month = [(item['month'].year, item['month'].month, item['c']) for item in year_list]
     return render(request, 'blog/archive.html', context={'year_month': year_month})
 
+def category(request, id):
+    # 记得在开始部分导入 Category 类
+    cate = get_object_or_404(Category, id=id)
+    post_list = Post.objects.filter(category=cate).order_by('-created_time')
+    return render(request, 'blog/index.html', context={'post_list': post_list})
+
+
+def tag(request, id):
+    # 记得在开始部分导入 Tag 类
+    t = get_object_or_404(Tag, id=id)
+    post_list = Post.objects.filter(tags=t).order_by('-created_time')
+    return render(request, 'blog/index.html', context={'post_list': post_list})
 
 # 测试ajax
 # 根据年月获取文章
@@ -127,15 +139,11 @@ def response_success(message, data=None, data_list=[]):
     }), 'application/json')
 
 
-def category(request, id):
-    # 记得在开始部分导入 Category 类
-    cate = get_object_or_404(Category, id=id)
-    post_list = Post.objects.filter(category=cate).order_by('-created_time')
-    return render(request, 'blog/index.html', context={'post_list': post_list})
+# 后端统计图表的接口
 
+def posts_of_days(request):
+    # Post.objects.all().annotate('created_time')
+    post_day_num = Post.objects.extra(select={'day': 'date( created_time )'}).values('day').annotate(available=Count('created_time'))
+    data = serializers.serialize("json", post_day_num)
+    return json.dumps(data)
 
-def tag(request, id):
-    # 记得在开始部分导入 Tag 类
-    t = get_object_or_404(Tag, id=id)
-    post_list = Post.objects.filter(tags=t).order_by('-created_time')
-    return render(request, 'blog/index.html', context={'post_list': post_list})
