@@ -1,6 +1,9 @@
 {% load i18n static simpletags %}
 {% block extrahead %}
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.3.1/dist/echarts.js"></script>
+    <script crossorigin="anonymous"
+            integrity="sha512-n/4gHW3atM3QqRcbCn6ewmpxcLAHGaDjpEBu4xZd47N0W2oQ+6q7oc3PXstrJYXcbNU1OHdQ1T7pAP+gi5Yu8g=="
+            src="https://lib.baomitu.com/jquery/3.6.0/jquery.js"></script>
 {% endblock %}
 <div id="home">
     <el-row class="info-card">
@@ -13,7 +16,7 @@
             </el-col>
             <el-col :span="16">
                 <el-card shadow="always">
-                    <canvas id="myChart" width="900px" height="250"></canvas>
+                    <div id="myChart" style="width: 900px;height: 300px"></div>
                 </el-card>
             </el-col>
         </el-card>
@@ -139,76 +142,88 @@
 <script>
     window.onload = function () {
         Static()
-        Daily()
+        Myname()
     }
 
-    Daily = function () {
+    Myname = function () {
+
 
         let chartDom = document.getElementById('myChart');
-        let myChart = echarts.init(chartDom, null, {devicePixelRatio: 1.2});
+        let myChart = echarts.init(chartDom, null, {renderer: 'svg'});
         let option;
 
-        function getVirtulData(year) {
-            year = year || '2017';
-            let date = +echarts.number.parseDate(year + '-01-01');
-            let end = +echarts.number.parseDate(+year + 1 + '-01-01');
-            let dayTime = 3600 * 24 * 1000;
-            let data = [];
-            for (let time = date; time < end; time += dayTime) {
-                data.push([
-                    echarts.format.formatTime('yyyy-MM-dd', time),
-                    Math.floor(Math.random() * 10000)
-                ]);
-            }
-            return data;
-        }
-
         option = {
-            title: {
-                top: 10,
-                left: 'center',
-                {#text: 'Daily Step Count'#}
-            },
-            tooltip: {},
-            visualMap: {
-                min: 0,
-                max: 10,
-                type: 'piecewise',
-                orient: 'horizontal',
-                left: 'center',
-                top: 65
-            },
-            calendar: {
-                top: 120,
-                left: 30,
-                right: 30,
-                cellSize: ['auto', 15],
-                range: '2016',
-                itemStyle: {
-                    borderWidth: 0.4
-                },
-                yearLabel: {show: true}
-            },
-            series: {
-                type: 'heatmap',
-                coordinateSystem: 'calendar',
-                data: getVirtulData('2022')
+            graphic: {
+                elements: [
+                    {
+                        type: 'text',
+                        left: 'center',
+                        top: 'center',
+                        style: {
+                            text: 'AngYi Blog',
+                            fontSize: 150,
+                            fontWeight: 'bold',
+                            lineDash: [0, 200],
+                            lineDashOffset: 0,
+                            fill: 'transparent',
+                            stroke: '#000',
+                            lineWidth: 1
+                        },
+                        keyframeAnimation: {
+                            duration: 3000,
+                            loop: false,
+                            keyframes: [
+                                {
+                                    percent: 0.7,
+                                    style: {
+                                        fill: 'transparent',
+                                        lineDashOffset: 200,
+                                        lineDash: [200, 0]
+                                    }
+                                },
+                                {
+                                    // Stop for a while.
+                                    percent: 0.8,
+                                    style: {
+                                        fill: 'transparent'
+                                    }
+                                },
+                                {
+                                    percent: 1,
+                                    style: {
+                                        fill: 'black'
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
             }
         };
 
         option && myChart.setOption(option);
+
     }
 
     // 仪表盘  文章总数  类别数量  标签数量
     Static = function () {
-
+        $.ajax({
+            url: '/api/blogNumSummary',
+            dataType: "json",
+            async:false,
+            success: function (result) {
+                post_num = result.data.post_num-330
+                tag_num = result.data.tag_num
+                cate_num = result.data.cate_num
+                console.log(result.data)
+            }
+        })
         let chartDom = document.getElementById('myName');
         let myChart = echarts.init(chartDom, null, {renderer: 'svg'});
         let option;
-
-        const gaugeData = [
+        let gaugeData = [
             {
-                value: 90,
+                value: post_num,
                 name: '博客',
                 title: {
                     offsetCenter: ['-80%', '85%']
@@ -218,7 +233,7 @@
                 }
             },
             {
-                value: 40,
+                value: cate_num,
                 name: '分类',
                 title: {
                     offsetCenter: ['0%', '85%']
@@ -228,7 +243,7 @@
                 }
             },
             {
-                value: 60,
+                value: tag_num,
                 name: '标签',
                 title: {
                     offsetCenter: ['80%', '85%']
@@ -238,6 +253,7 @@
                 }
             }
         ];
+
         option = {
             series: [
                 {
@@ -282,9 +298,9 @@
         };
 
 
-            option && myChart.setOption(option);
+        option && myChart.setOption(option);
 
-        }
+    }
 
 
 </script>

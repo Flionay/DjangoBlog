@@ -20,7 +20,4 @@ admin.site.register(Tag)
 admin.site.site_header = 'AngYi博客管理后台'
 admin.site.site_title = "AngYi\'s blog"
 
-@admin.register(PostSummary)
-class PostSummary(admin.ModelAdmin):
-    change_list_template = 'admin/post_summary.html'
-    # date_hierarchy = "created_time"
+

@@ -12,8 +12,9 @@ import markdown
 # Create your views here.
 # from django.core import serializers
 from markdown.extensions.toc import slugify, TocExtension
-
+from .serializers import PostSerializer
 from .models import Post, Tag, Category
+
 
 
 def index(request):
@@ -92,6 +93,7 @@ def archive(request):
     year_month = [(item['month'].year, item['month'].month, item['c']) for item in year_list]
     return render(request, 'blog/archive.html', context={'year_month': year_month})
 
+
 def category(request, id):
     # 记得在开始部分导入 Category 类
     cate = get_object_or_404(Category, id=id)
@@ -105,16 +107,9 @@ def tag(request, id):
     post_list = Post.objects.filter(tags=t).order_by('-created_time')
     return render(request, 'blog/index.html', context={'post_list': post_list})
 
+
 # 测试ajax
 # 根据年月获取文章
-
-class PostSerializer(serializers.ModelSerializer):
-    tag_name = serializers.CharField(source='tags.name')
-    cate_name = serializers.CharField(source='category.name')
-
-    class Meta:
-        model = Post
-        fields = '__all__'
 
 
 def getpost_yearmonth(request):
@@ -124,10 +119,9 @@ def getpost_yearmonth(request):
     post = Post.objects.get_queryset().filter(
         created_time__year=year,
         created_time__month=month)
-    posts = PostSerializer(instance=post,many=True)
+    posts = PostSerializer(instance=post, many=True)
     # print(posts.data)
     return response_success(message='后台响应成功', data_list=posts.data)
-
 
 
 def response_success(message, data=None, data_list=[]):
@@ -141,9 +135,14 @@ def response_success(message, data=None, data_list=[]):
 
 # 后端统计图表的接口
 
-def posts_of_days(request):
-    # Post.objects.all().annotate('created_time')
-    post_day_num = Post.objects.extra(select={'day': 'date( created_time )'}).values('day').annotate(available=Count('created_time'))
-    data = serializers.serialize("json", post_day_num)
-    return json.dumps(data)
-
+def blogNumSummary(request):
+    # 返回博客 标签 和 tag 的数量
+    post_num = Post.objects.all().__len__()
+    tag_num = Tag.objects.all().__len__()
+    cate_num = Category.objects.all().__len__()
+    data = {
+        'post_num': post_num,
+        'tag_num': tag_num,
+        'cate_num': cate_num
+    }
+    return response_success(message="success", data=data)
